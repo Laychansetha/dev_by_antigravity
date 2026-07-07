@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroInsight — Agricultural Operations Dashboard</title>
+  <meta name="description"
+    content="Interactive agricultural operations dashboard for organic rice farming across Cambodia. Track farmer participation, production, yield, quality, and compliance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="src/lib/leaflet.css" />
+  <link rel="stylesheet" href="src/css/dashboard.css" />
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════════ LOADING SCREEN -->
+  <div id="loading-screen">
+    <div class="loader-inner">
+      <div class="loader-logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M24 4 L28 16 L40 16 L30 24 L34 36 L24 28 L14 36 L18 24 L8 16 L20 16 Z" fill="#00D4A8"
+            opacity="0.9" />
+          <circle cx="24" cy="24" r="6" fill="#00D4A8" />
+        </svg>
+      </div>
+      <div class="loader-title">FieldDataInsight</div>
+      <div class="loader-sub">Loading agricultural data…</div>
+      <div class="loader-bar-wrap">
+        <div id="loader-bar" class="loader-bar"></div>
+      </div>
+      <div id="loader-status" class="loader-status">Initialising…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ NO DATA SCREEN -->
+  <div id="no-data-screen" style="display:none">
+    <div class="no-data-inner">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.5">
+        <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+      </svg>
+      <h2>Data file not found</h2>
+      <p>Run the preprocessor to generate the data file:</p>
+      <code>python preprocess/build_data.py</code>
+      <p class="hint">Then refresh this page.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ APP SHELL -->
+  <div id="app">
+
+    <!-- ─── SIDEBAR ──────────────────────────────────────────── -->
+    <nav id="sidebar">
+      <div class="sidebar-brand">
+        <svg class="brand-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="15" fill="rgba(0,212,168,0.12)" stroke="#00D4A8" stroke-width="1.5" />
+          <path d="M16 6 L18.5 13 L26 13 L20 17.5 L22.5 24.5 L16 20 L9.5 24.5 L12 17.5 L6 13 L13.5 13 Z"
+            fill="#00D4A8" />
+        </svg>
+        <div class="brand-text">
+          <span class="brand-name">AgroInsight</span>
+          <span class="brand-sub">Cambodia Rice Program</span>
+        </div>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item active" data-tab="overview" title="Executive Overview">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <rect x="3" y="3" width="7" height="9" />
+            <rect x="14" y="3" width="7" height="5" />
+            <rect x="14" y="12" width="7" height="9" />
+            <rect x="3" y="16" width="7" height="5" />
+          </svg>
+          <span class="nav-label">Overview</span>
+        </li>
+        <li class="nav-item" data-tab="farmers" title="Farmer Analytics">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+          </svg>
+          <span class="nav-label">Farmers</span>
+        </li>
+        <li class="nav-item" data-tab="production" title="Production & Yield">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <path d="M12 2a10 10 0 010 20M2 12h20M12 2C6.48 2 2 6.48 2 12" />
+            <path d="M12 2c2.76 0 5.26 5.37 5.26 10S14.76 22 12 22" />
+          </svg>
+          <span class="nav-label">Production</span>
+        </li>
+        <li class="nav-item" data-tab="market" title="Purchase & Market">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+          </svg>
+          <span class="nav-label">Market</span>
+        </li>
+        <li class="nav-item" data-tab="quality" title="Quality & Compliance">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <path d="M9 11l3 3L22 4" />
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+          </svg>
+          <span class="nav-label">Quality</span>
+        </li>
+        <li class="nav-item" data-tab="geography" title="Geographic View">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+          </svg>
+          <span class="nav-label">Geography</span>
+        </li>
+        <li class="nav-item" data-tab="land" title="Land & Fields">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span class="nav-label">Land</span>
+        </li>
+        <li class="nav-item" data-tab="records" title="Farmer Records">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          <span class="nav-label">Records</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-meta">
+        <div class="meta-label">Data generated</div>
+        <div class="meta-value" id="sidebar-gen-date">—</div>
+        <div class="meta-label" style="margin-top:6px">Years covered</div>
+        <div class="meta-value" id="sidebar-years">—</div>
+      </div>
+    </nav>
+
+    <!-- ─── MAIN AREA ─────────────────────────────────────────── -->
+    <div id="main-wrapper">
+
+      <!-- TOP BAR -->
+      <header id="topbar">
+        <div class="topbar-left">
+          <button id="sidebar-toggle" class="icon-btn" title="Toggle sidebar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <h1 id="page-title">Overview</h1>
+        </div>
+
+        <div class="topbar-filters">
+          <div class="filter-group" id="fg-year">
+            <button class="filter-btn" id="fb-year">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                width="14" height="14">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              Year <span class="filter-badge" id="fb-year-badge">All</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12"
+                height="12">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="filter-dropdown" id="fd-year"></div>
+          </div>
+
+          <div class="filter-group" id="fg-site">
+            <button class="filter-btn" id="fb-site">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                width="14" height="14">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              Site <span class="filter-badge" id="fb-site-badge">All</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12"
+                height="12">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="filter-dropdown" id="fd-site"></div>
+          </div>
+
+          <div class="filter-group" id="fg-cert">
+            <button class="filter-btn" id="fb-cert">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                width="14" height="14">
+                <circle cx="12" cy="8" r="7" />
+                <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
+              </svg>
+              Certification <span class="filter-badge" id="fb-cert-badge">All</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12"
+                height="12">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="filter-dropdown" id="fd-cert"></div>
+          </div>
+
+          <button class="reset-btn" id="btn-reset-filters" title="Reset all filters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              width="14" height="14">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+            </svg>
+            Reset
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <main id="content-area">
+
+        <!-- ══ TAB: OVERVIEW ══════════════════════════════════════ -->
+        <section id="tab-overview" class="tab-pane active">
+          <div class="kpi-grid" id="kpi-overview"></div>
+
+          <div class="charts-row cols-2">
+            <div class="chart-card" id="cc-farmer-growth">
+              <div class="chart-header">
+                <h3>Farmer Participation by Year</h3>
+                <span class="chart-badge badge-green">Stacked</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-farmer-growth"></canvas></div>
+            </div>
+            <div class="chart-card" id="cc-production-trend">
+              <div class="chart-header">
+                <h3>Rice Production &amp; Yield</h3>
+                <span class="chart-badge badge-teal">Dual Axis</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-production-trend"></canvas></div>
+            </div>
+          </div>
+
+          <div class="charts-row cols-3">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Purchase Volume &amp; Revenue</h3>
+                <span class="chart-badge badge-gold">Bar + Line</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-purchase-trend"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Certification Status</h3>
+                <span class="chart-badge badge-blue">Latest Year</span>
+              </div>
+              <div class="chart-body chart-body-sm"><canvas id="chart-cert-doughnut"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Site Performance</h3>
+                <span class="chart-badge badge-purple">Radar</span>
+              </div>
+              <div class="chart-body chart-body-sm"><canvas id="chart-site-radar"></canvas></div>
+            </div>
+          </div>
+
+          <div class="insights-panel" id="insights-overview"></div>
+        </section>
+
+        <!-- ══ TAB: FARMERS ═══════════════════════════════════════ -->
+        <section id="tab-farmers" class="tab-pane">
+          <div class="kpi-grid" id="kpi-farmers"></div>
+
+          <div class="charts-row cols-2">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Farmer Status Breakdown by Year</h3>
+                <span class="chart-badge badge-green">Stacked Bar</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-farmer-status"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Active Farmers by Site &amp; Year</h3>
+                <span class="chart-badge badge-teal">Grouped</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-farmers-by-site"></canvas></div>
+            </div>
+          </div>
+
+          <div class="charts-row cols-3">
+            <div class="chart-card span-2">
+              <div class="chart-header">
+                <h3>Top 15 Villages by Farmer Count</h3>
+                <span class="chart-badge badge-gold">Ranked</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-top-villages-farmers"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Gender Distribution</h3>
+                <span class="chart-badge badge-purple">By Site</span>
+              </div>
+              <div class="chart-body chart-body-sm"><canvas id="chart-gender"></canvas></div>
+            </div>
+          </div>
+
+          <div class="chart-card full-width">
+            <div class="chart-header">
+              <h3>Farmer Cohort Retention Matrix</h3>
+              <span class="chart-badge badge-blue">Retention %</span>
+            </div>
+            <div class="table-scroll" id="cohort-table-wrap"></div>
+          </div>
+        </section>
+
+        <!-- ══ TAB: PRODUCTION ════════════════════════════════════ -->
+        <section id="tab-production" class="tab-pane">
+          <div class="kpi-grid" id="kpi-production"></div>
+
+          <div class="charts-row cols-2">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Total Production vs. Farmland Area</h3>
+                <span class="chart-badge badge-green">Dual Axis</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-prod-area"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Average Yield per Hectare by Site</h3>
+                <span class="chart-badge badge-teal">Multi-line</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-yield-site"></canvas></div>
+            </div>
+          </div>
+
+          <div class="charts-row cols-3">
+            <div class="chart-card span-2">
+              <div class="chart-header">
+                <h3>Paddy Allocation: Sell vs Consume vs Seed</h3>
+                <span class="chart-badge badge-gold">Stacked</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-paddy-split"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Threshing Method</h3>
+                <span class="chart-badge badge-blue">By Year</span>
+              </div>
+              <div class="chart-body chart-body-sm"><canvas id="chart-threshing-method"></canvas></div>
+            </div>
+          </div>
+
+          <div class="chart-card full-width">
+            <div class="chart-header">
+              <h3>Top 20 Villages by Total Production (kg)</h3>
+              <span class="chart-badge badge-purple">All Years</span>
+            </div>
+            <div class="chart-body chart-body-lg"><canvas id="chart-top-villages-prod"></canvas></div>
+          </div>
+        </section>
+
+        <!-- ══ TAB: MARKET ════════════════════════════════════════ -->
+        <section id="tab-market" class="tab-pane">
+          <div class="kpi-grid" id="kpi-market"></div>
+
+          <div class="charts-row cols-2">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Purchase Volume &amp; Revenue by Year</h3>
+                <span class="chart-badge badge-green">Dual Axis</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-market-trend"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Average Price per kg (Riel) by Year</h3>
+                <span class="chart-badge badge-gold">Trend</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-price-trend"></canvas></div>
+            </div>
+          </div>
+
+          <div class="charts-row cols-2">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Revenue by Site by Year</h3>
+                <span class="chart-badge badge-teal">Grouped</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-revenue-site"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Purchase Volume by Variety</h3>
+                <span class="chart-badge badge-purple">Stacked</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-variety-volume"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ TAB: QUALITY ═══════════════════════════════════════ -->
+        <section id="tab-quality" class="tab-pane">
+          <div class="kpi-grid" id="kpi-quality"></div>
+
+          <div class="charts-row cols-2">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Rice Quality Grade Distribution by Year</h3>
+                <span class="chart-badge badge-green">Stacked %</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-grade-dist"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Grain Quality Metrics Trend</h3>
+                <span class="chart-badge badge-teal">Multi-line</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-quality-trend"></canvas></div>
+            </div>
+          </div>
+
+          <div class="charts-row cols-3">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Moisture Content Trend</h3>
+                <span class="chart-badge badge-blue">Avg %</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-moisture"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Grain Color Distribution</h3>
+                <span class="chart-badge badge-gold">All Years</span>
+              </div>
+              <div class="chart-body chart-body-sm"><canvas id="chart-color-dist"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Avg Price by Grade (Riel/kg)</h3>
+                <span class="chart-badge badge-purple">Grade</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-price-grade"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ TAB: GEOGRAPHY ═════════════════════════════════════ -->
+        <section id="tab-geography" class="tab-pane">
+          <div class="geo-layout">
+            <div class="geo-map-wrap">
+              <div id="leaflet-map"></div>
+            </div>
+            <div class="geo-sidebar">
+              <div class="geo-site-header">
+                <h3 id="geo-site-name">Select a site on the map</h3>
+                <span class="chart-badge badge-green" id="geo-site-badge"></span>
+              </div>
+              <div id="geo-site-kpis" class="geo-kpi-list"></div>
+              <div class="geo-village-section">
+                <h4>Villages in this site</h4>
+                <div id="geo-village-list" class="geo-village-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card full-width" style="margin-top:16px">
+            <div class="chart-header">
+              <h3>Site Comparison — All Metrics</h3>
+              <span class="chart-badge badge-teal">All Sites</span>
+            </div>
+            <div class="chart-body"><canvas id="chart-site-comparison"></canvas></div>
+          </div>
+        </section>
+
+        <!-- ══ TAB: LAND ══════════════════════════════════════════ -->
+        <section id="tab-land" class="tab-pane">
+          <div class="kpi-grid" id="kpi-land"></div>
+
+          <div class="charts-row cols-2">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Total Certified Farmland Area (ha) by Year</h3>
+                <span class="chart-badge badge-green">Growth</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-area-trend"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Certification Type Trend</h3>
+                <span class="chart-badge badge-teal">Stacked</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-cert-trend"></canvas></div>
+            </div>
+          </div>
+
+          <div class="charts-row cols-3">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Land Situation</h3>
+                <span class="chart-badge badge-gold">Doughnut</span>
+              </div>
+              <div class="chart-body chart-body-sm"><canvas id="chart-land-sit"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Land Ownership Type</h3>
+                <span class="chart-badge badge-blue">Doughnut</span>
+              </div>
+              <div class="chart-body chart-body-sm"><canvas id="chart-land-own"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Irrigation System Usage</h3>
+                <span class="chart-badge badge-purple">Bar</span>
+              </div>
+              <div class="chart-body"><canvas id="chart-irrigation"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ TAB: RECORDS ═══════════════════════════════════════ -->
+        <section id="tab-records" class="tab-pane">
+          <div class="records-toolbar">
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                width="16" height="16">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input type="text" id="records-search" placeholder="Search by ID, village, site, certification…" />
+            </div>
+            <div class="records-filters">
+              <select id="rec-filter-site">
+                <option value="">All Sites</option>
+              </select>
+              <select id="rec-filter-cert">
+                <option value="">All Certifications</option>
+              </select>
+              <select id="rec-filter-gender">
+                <option value="">All Genders</option>
+              </select>
+            </div>
+            <div class="records-actions">
+              <span id="records-count" class="records-count">— farmers</span>
+              <button class="btn-export" id="btn-export-csv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  width="14" height="14">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-scroll">
+              <table class="data-table" id="records-table">
+                <thead>
+                  <tr>
+                    <th class="sortable" data-col="uid">Farmer ID <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="site">Site <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="village">Village <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="gender">Gender <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="first_year">Since <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="years_count">Years Active <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="insp_total">Inspections <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="compliance">Compliance <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="area_ha">Area (ha) <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="prod_kg">Production (kg) <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="purch_riel">Revenue (Riel) <span class="sort-icon">↕</span></th>
+                    <th>Certification</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="records-tbody"></tbody>
+              </table>
+            </div>
+            <div class="table-pagination" id="records-pagination"></div>
+          </div>
+        </section>
+
+      </main>
+    </div><!-- /main-wrapper -->
+  </div><!-- /app -->
+
+  <!-- ══════════════════════════════════════════════════ FARMER MODAL -->
+  <div id="farmer-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="modal-farmer-id">Farmer Details</h2>
+          <div class="modal-subtitle" id="modal-farmer-meta"></div>
+        </div>
+        <button class="modal-close" id="modal-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            width="18" height="18">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-kpis" id="modal-kpis"></div>
+        <div class="modal-section">
+          <h4>Certification History</h4>
+          <div id="modal-cert-timeline" class="cert-timeline"></div>
+        </div>
+        <div class="modal-section">
+          <h4>Crop Varieties</h4>
+          <div id="modal-varieties" class="tag-list"></div>
+        </div>
+        <div class="modal-section">
+          <h4>Active Years</h4>
+          <div id="modal-years" class="tag-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ SCRIPTS -->
+  <script src="src/lib/chart.umd.min.js"></script>
+  <script src="src/lib/leaflet.js"></script>
+  <script src="data/dashboard_data.js"></script>
+  <script src="src/js/data.js"></script>
+  <script src="src/js/charts.js"></script>
+  <script src="src/js/views.js"></script>
+  <script src="src/js/app.js"></script>
+
+</body>
+
+</html>
