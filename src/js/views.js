@@ -9,12 +9,12 @@ var Views = (function () {
   function renderKPICard(targetEl, kpis) {
     if (!targetEl) return;
     targetEl.innerHTML = '';
-    
+
     var list = [
-      { key: 'farmers',    label: 'Active Farmers',   fmt: Data.numFmt,  cls: 'green' },
-      { key: 'prod_kg',    label: 'Paddy Production', fmt: Data.kgFmt,   cls: 'teal' },
-      { key: 'purch_riel', label: 'Program Revenue',  fmt: Data.rielFmt, cls: 'gold' },
-      { key: 'compliance', label: 'Compliance Rate',  fmt: Data.pctFmt,  cls: 'blue' }
+      { key: 'farmers', label: 'Active Farmers', fmt: Data.numFmt, cls: 'green' },
+      { key: 'prod_kg', label: 'Paddy Production', fmt: Data.kgFmt, cls: 'teal' },
+      { key: 'purch_riel', label: 'Program Revenue', fmt: Data.rielFmt, cls: 'gold' },
+      { key: 'compliance', label: 'Compliance Rate', fmt: Data.pctFmt, cls: 'blue' }
     ];
 
     list.forEach(function (item) {
@@ -34,7 +34,7 @@ var Views = (function () {
         chgHtml = '<span class="kpi-change flat">YoY —</span>';
       }
 
-      card.innerHTML = 
+      card.innerHTML =
         '<div class="kpi-label">' + item.label + '</div>' +
         '<div class="kpi-value">' + item.fmt(k.val) + '</div>' +
         '<div class="kpi-footer">' + chgHtml + '<span class="kpi-sub">vs prior period</span></div>';
@@ -68,11 +68,11 @@ var Views = (function () {
       insights.forEach(function (ins) {
         var item = document.createElement('div');
         item.className = 'insight-item';
-        item.innerHTML = 
+        item.innerHTML =
           '<div class="insight-icon">' + ins.icon + '</div>' +
           '<div class="insight-text">' +
-            '<div class="insight-title">' + ins.title + '</div>' +
-            '<div class="insight-body">' + ins.body + '</div>' +
+          '<div class="insight-title">' + ins.title + '</div>' +
+          '<div class="insight-body">' + ins.body + '</div>' +
           '</div>';
         ip.appendChild(item);
       });
@@ -91,7 +91,7 @@ var Views = (function () {
     if (document.getElementById('kpi-farmers')) {
       var targetEl = document.getElementById('kpi-farmers');
       targetEl.innerHTML = '';
-      
+
       var items = [
         { val: kpis.farmers ? kpis.farmers.val : 0, chg: kpis.farmers ? kpis.farmers.chg : null, label: 'Active Farmers', fmt: Data.numFmt, cls: 'green' },
         { val: trend.reduce(function (a, b) { return a + (b.new || 0); }, 0), label: 'Total New Registrations', fmt: Data.numFmt, cls: 'teal' },
@@ -106,7 +106,7 @@ var Views = (function () {
           var isUp = it.chg >= 0;
           chg = '<span class="kpi-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲' : '▼') + ' ' + (isUp ? '+' : '') + it.chg + '%</span>';
         }
-        card.innerHTML = 
+        card.innerHTML =
           '<div class="kpi-label">' + it.label + '</div>' +
           '<div class="kpi-value">' + it.fmt(it.val) + '</div>' +
           '<div class="kpi-footer">' + chg + '<span class="kpi-sub">Across active years</span></div>';
@@ -181,11 +181,11 @@ var Views = (function () {
     if (document.getElementById('kpi-production')) {
       var targetEl = document.getElementById('kpi-production');
       targetEl.innerHTML = '';
-      
+
       var items = [
         { val: kpis.prod_kg ? kpis.prod_kg.val : 0, chg: kpis.prod_kg ? kpis.prod_kg.chg : null, label: 'Total Production', fmt: Data.kgFmt, cls: 'teal' },
-        { val: kpis.avg_yield ? kpis.avg_yield.val : 0, chg: kpis.avg_yield ? kpis.avg_yield.chg : null, label: 'Avg Yield per Hectare', fmt: function(n){return Data.numFmt(n,1) + ' Kg/Ha';}, cls: 'green' },
-        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Cultivated Farmland', fmt: function(n){return Data.numFmt(n, 1) + ' Ha';}, cls: 'blue' }
+        { val: kpis.avg_yield ? kpis.avg_yield.val : 0, chg: kpis.avg_yield ? kpis.avg_yield.chg : null, label: 'Avg Yield per Hectare', fmt: function (n) { return Data.numFmt(n, 1) + ' Kg/Ha'; }, cls: 'green' },
+        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Cultivated Farmland', fmt: function (n) { return Data.numFmt(n, 1) + ' Ha'; }, cls: 'blue' }
       ];
 
       items.forEach(function (it) {
@@ -196,7 +196,7 @@ var Views = (function () {
           var isUp = it.chg >= 0;
           chg = '<span class="kpi-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲' : '▼') + ' ' + (isUp ? '+' : '') + it.chg + '%</span>';
         }
-        card.innerHTML = 
+        card.innerHTML =
           '<div class="kpi-label">' + it.label + '</div>' +
           '<div class="kpi-value">' + it.fmt(it.val) + '</div>' +
           '<div class="kpi-footer">' + chg + '<span class="kpi-sub">vs prior period</span></div>';
@@ -222,11 +222,11 @@ var Views = (function () {
     if (document.getElementById('kpi-market')) {
       var targetEl = document.getElementById('kpi-market');
       targetEl.innerHTML = '';
-      
+
       var items = [
         { val: kpis.purch_riel ? kpis.purch_riel.val : 0, chg: kpis.purch_riel ? kpis.purch_riel.chg : null, label: 'Total Revenue Paid', fmt: Data.rielFmt, cls: 'gold' },
         { val: kpis.purch_kg ? kpis.purch_kg.val : 0, chg: kpis.purch_kg ? kpis.purch_kg.chg : null, label: 'Volume Purchased', fmt: Data.kgFmt, cls: 'green' },
-        { val: kpis.avg_price ? kpis.avg_price.val : 0, chg: kpis.avg_price ? kpis.avg_price.chg : null, label: 'Avg Unit Price', fmt: function(n){return Data.rielFmt(n) + '/Kg';}, cls: 'teal' }
+        { val: kpis.avg_price ? kpis.avg_price.val : 0, chg: kpis.avg_price ? kpis.avg_price.chg : null, label: 'Avg Unit Price', fmt: function (n) { return Data.rielFmt(n) + '/Kg'; }, cls: 'teal' }
       ];
 
       items.forEach(function (it) {
@@ -237,7 +237,7 @@ var Views = (function () {
           var isUp = it.chg >= 0;
           chg = '<span class="kpi-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲' : '▼') + ' ' + (isUp ? '+' : '') + it.chg + '%</span>';
         }
-        card.innerHTML = 
+        card.innerHTML =
           '<div class="kpi-label">' + it.label + '</div>' +
           '<div class="kpi-value">' + it.fmt(it.val) + '</div>' +
           '<div class="kpi-footer">' + chg + '<span class="kpi-sub">vs prior period</span></div>';
@@ -260,7 +260,7 @@ var Views = (function () {
     if (document.getElementById('kpi-quality')) {
       var targetEl = document.getElementById('kpi-quality');
       targetEl.innerHTML = '';
-      
+
       // Compute averages across selected years
       var moists = [], good = [], broken = [], records = 0;
       Object.values(qData).forEach(function (d) {
@@ -270,20 +270,20 @@ var Views = (function () {
         records += d.total_records || 0;
       });
 
-      var avgMoist = moists.length ? moists.reduce(function(a,b){return a+b;},0)/moists.length : 0;
-      var avgGood  = good.length ? good.reduce(function(a,b){return a+b;},0)/good.length : 0;
-      var avgBroken = broken.length ? broken.reduce(function(a,b){return a+b;},0)/broken.length : 0;
+      var avgMoist = moists.length ? moists.reduce(function (a, b) { return a + b; }, 0) / moists.length : 0;
+      var avgGood = good.length ? good.reduce(function (a, b) { return a + b; }, 0) / good.length : 0;
+      var avgBroken = broken.length ? broken.reduce(function (a, b) { return a + b; }, 0) / broken.length : 0;
 
       var items = [
-        { val: avgGood, label: 'Average Good Grain %', fmt: function(n){return Data.numFmt(n,1)+'%';}, cls: 'green' },
-        { val: avgMoist, label: 'Average Moisture Content', fmt: function(n){return Data.numFmt(n,1)+'%';}, cls: 'blue' },
+        { val: avgGood, label: 'Average Good Grain %', fmt: function (n) { return Data.numFmt(n, 1) + '%'; }, cls: 'green' },
+        { val: avgMoist, label: 'Average Moisture Content', fmt: function (n) { return Data.numFmt(n, 1) + '%'; }, cls: 'blue' },
         { val: records, label: 'Grading Records Analyzed', fmt: Data.numFmt, cls: 'teal' }
       ];
 
       items.forEach(function (it) {
         var card = document.createElement('div');
         card.className = 'kpi-card ' + it.cls;
-        card.innerHTML = 
+        card.innerHTML =
           '<div class="kpi-label">' + it.label + '</div>' +
           '<div class="kpi-value">' + it.fmt(it.val) + '</div>' +
           '<div class="kpi-footer"><span class="kpi-change flat">Overall</span><span class="kpi-sub">across active years</span></div>';
@@ -307,9 +307,9 @@ var Views = (function () {
     if (document.getElementById('kpi-land')) {
       var targetEl = document.getElementById('kpi-land');
       targetEl.innerHTML = '';
-      
+
       var items = [
-        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Farmland Area (Hectares)', fmt: function(n){return Data.numFmt(n,1)+' Ha';}, cls: 'green' },
+        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Farmland Area (Hectares)', fmt: function (n) { return Data.numFmt(n, 1) + ' Ha'; }, cls: 'green' },
         { val: kpis.farmers ? kpis.farmers.val : 0, chg: kpis.farmers ? kpis.farmers.chg : null, label: 'Inspected Farmers', fmt: Data.numFmt, cls: 'blue' },
         { val: kpis.compliance ? kpis.compliance.val : 0, chg: kpis.compliance ? kpis.compliance.chg : null, label: 'Average Compliance Rate', fmt: Data.pctFmt, cls: 'teal' }
       ];
@@ -322,7 +322,7 @@ var Views = (function () {
           var isUp = it.chg >= 0;
           chg = '<span class="kpi-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲' : '▼') + ' ' + (isUp ? '+' : '') + it.chg + '%</span>';
         }
-        card.innerHTML = 
+        card.innerHTML =
           '<div class="kpi-label">' + it.label + '</div>' +
           '<div class="kpi-value">' + it.fmt(it.val) + '</div>' +
           '<div class="kpi-footer">' + chg + '<span class="kpi-sub">vs prior period</span></div>';
@@ -342,12 +342,12 @@ var Views = (function () {
   function update(tabId, state) {
     if (!Data.ready()) return;
     switch (tabId) {
-      case 'overview':   updateOverview(state); break;
-      case 'farmers':    updateFarmers(state); break;
+      case 'overview': updateOverview(state); break;
+      case 'farmers': updateFarmers(state); break;
       case 'production': updateProduction(state); break;
-      case 'market':     updateMarket(state); break;
-      case 'quality':    updateQuality(state); break;
-      case 'land':       updateLand(state); break;
+      case 'market': updateMarket(state); break;
+      case 'quality': updateQuality(state); break;
+      case 'land': updateLand(state); break;
     }
   }
 
