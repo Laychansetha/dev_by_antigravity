@@ -184,8 +184,8 @@ var Views = (function () {
       
       var items = [
         { val: kpis.prod_kg ? kpis.prod_kg.val : 0, chg: kpis.prod_kg ? kpis.prod_kg.chg : null, label: 'Total Production', fmt: Data.kgFmt, cls: 'teal' },
-        { val: kpis.avg_yield ? kpis.avg_yield.val : 0, chg: kpis.avg_yield ? kpis.avg_yield.chg : null, label: 'Avg Yield per Hectare', fmt: function(n){return Data.numFmt(n,1) + ' kg/ha';}, cls: 'green' },
-        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Cultivated Farmland', fmt: function(n){return Data.numFmt(n, 1) + ' ha';}, cls: 'blue' }
+        { val: kpis.avg_yield ? kpis.avg_yield.val : 0, chg: kpis.avg_yield ? kpis.avg_yield.chg : null, label: 'Avg Yield per Hectare', fmt: function(n){return Data.numFmt(n,1) + ' Kg/Ha';}, cls: 'green' },
+        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Cultivated Farmland', fmt: function(n){return Data.numFmt(n, 1) + ' Ha';}, cls: 'blue' }
       ];
 
       items.forEach(function (it) {
@@ -226,7 +226,7 @@ var Views = (function () {
       var items = [
         { val: kpis.purch_riel ? kpis.purch_riel.val : 0, chg: kpis.purch_riel ? kpis.purch_riel.chg : null, label: 'Total Revenue Paid', fmt: Data.rielFmt, cls: 'gold' },
         { val: kpis.purch_kg ? kpis.purch_kg.val : 0, chg: kpis.purch_kg ? kpis.purch_kg.chg : null, label: 'Volume Purchased', fmt: Data.kgFmt, cls: 'green' },
-        { val: kpis.avg_price ? kpis.avg_price.val : 0, chg: kpis.avg_price ? kpis.avg_price.chg : null, label: 'Avg Unit Price', fmt: function(n){return Data.rielFmt(n) + '/kg';}, cls: 'teal' }
+        { val: kpis.avg_price ? kpis.avg_price.val : 0, chg: kpis.avg_price ? kpis.avg_price.chg : null, label: 'Avg Unit Price', fmt: function(n){return Data.rielFmt(n) + '/Kg';}, cls: 'teal' }
       ];
 
       items.forEach(function (it) {
@@ -309,7 +309,7 @@ var Views = (function () {
       targetEl.innerHTML = '';
       
       var items = [
-        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Farmland Area (Hectares)', fmt: function(n){return Data.numFmt(n,1)+' ha';}, cls: 'green' },
+        { val: kpis.area_ha ? kpis.area_ha.val : 0, chg: kpis.area_ha ? kpis.area_ha.chg : null, label: 'Farmland Area (Hectares)', fmt: function(n){return Data.numFmt(n,1)+' Ha';}, cls: 'green' },
         { val: kpis.farmers ? kpis.farmers.val : 0, chg: kpis.farmers ? kpis.farmers.chg : null, label: 'Inspected Farmers', fmt: Data.numFmt, cls: 'blue' },
         { val: kpis.compliance ? kpis.compliance.val : 0, chg: kpis.compliance ? kpis.compliance.chg : null, label: 'Average Compliance Rate', fmt: Data.pctFmt, cls: 'teal' }
       ];

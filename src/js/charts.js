@@ -132,13 +132,13 @@ var Charts = (function () {
         labels: labels,
         datasets: [
           {
-            type: 'bar', label: 'Production (M kg)',
-            data: trend.map(function (d) { return Math.round(d.prod_kg / 1e6 * 100) / 100; }),
+            type: 'bar', label: 'Production (MT)',
+            data: trend.map(function (d) { return Math.round(d.prod_kg / 1000); }),
             backgroundColor: alpha('#00D4A8', 0.5), borderColor: '#00D4A8',
             borderWidth: 1.5, borderRadius: 4, yAxisID: 'y',
           },
           {
-            type: 'line', label: 'Avg Yield (kg/ha)',
+            type: 'line', label: 'Avg Yield (Kg/Ha)',
             data: trend.map(function (d) { return d.avg_yield; }),
             borderColor: '#F59E0B', backgroundColor: alpha('#F59E0B', 0.1),
             borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#F59E0B',
@@ -150,8 +150,8 @@ var Charts = (function () {
         responsive: true, maintainAspectRatio: false,
         scales: {
           x: xAxis,
-          y:  yAxis('Production (M kg)', false),
-          y2: yAxis('Avg Yield (kg/ha)', true),
+          y:  yAxis('Production (MT)', false),
+          y2: yAxis('Avg Yield (Kg/Ha)', true),
         },
         plugins: {legend: {position: 'top'}},
       },
@@ -167,14 +167,14 @@ var Charts = (function () {
         labels: labels,
         datasets: [
           {
-            type: 'bar', label: 'Volume (M kg)',
-            data: trend.map(function (d) { return Math.round(d.purch_kg / 1e6 * 100) / 100; }),
+            type: 'bar', label: 'Volume (MT)',
+            data: trend.map(function (d) { return Math.round(d.purch_kg / 1000); }),
             backgroundColor: alpha('#60A5FA', 0.5), borderColor: '#60A5FA',
             borderWidth: 1.5, borderRadius: 4, yAxisID: 'y',
           },
           {
-            type: 'line', label: 'Revenue (B ₨)',
-            data: trend.map(function (d) { return Math.round(d.purch_riel / 1e9 * 100) / 100; }),
+            type: 'line', label: 'Revenue ($M)',
+            data: trend.map(function (d) { return Math.round(d.purch_riel / 4e9 * 100) / 100; }),
             borderColor: '#A78BFA', backgroundColor: alpha('#A78BFA', 0.1),
             borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#A78BFA',
             tension: 0.4, fill: true, yAxisID: 'y2',
@@ -185,8 +185,8 @@ var Charts = (function () {
         responsive: true, maintainAspectRatio: false,
         scales: {
           x: xAxis,
-          y:  yAxis('Volume (M kg)', false),
-          y2: yAxis('Revenue (B ₨)', true),
+          y:  yAxis('Volume (MT)', false),
+          y2: yAxis('Revenue ($M)', true),
         },
         plugins: {legend: {position: 'top'}},
       },
@@ -371,13 +371,13 @@ var Charts = (function () {
         labels: labels,
         datasets: [
           {
-            type: 'bar', label: 'Production (M kg)',
-            data: trend.map(function (d) { return Math.round(d.prod_kg / 1e6 * 100) / 100; }),
+            type: 'bar', label: 'Production (MT)',
+            data: trend.map(function (d) { return Math.round(d.prod_kg / 1000); }),
             backgroundColor: alpha('#00D4A8', 0.5), borderColor: '#00D4A8',
             borderWidth: 1.5, borderRadius: 4, yAxisID: 'y',
           },
           {
-            type: 'line', label: 'Farmland Area (ha)',
+            type: 'line', label: 'Farmland Area (Ha)',
             data: trend.map(function (d) { return Math.round(d.area_ha); }),
             borderColor: '#F59E0B', backgroundColor: alpha('#F59E0B', 0.08),
             borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#F59E0B',
@@ -389,8 +389,8 @@ var Charts = (function () {
         responsive: true, maintainAspectRatio: false,
         scales: {
           x: xAxis,
-          y:  yAxis('Production (M kg)', false),
-          y2: yAxis('Area (ha)', true),
+          y:  yAxis('Production (MT)', false),
+          y2: yAxis('Area (Ha)', true),
         },
         plugins: {legend: {position: 'top'}},
       },
@@ -416,7 +416,7 @@ var Charts = (function () {
       data: {labels: years, datasets: datasets},
       options: {
         responsive: true, maintainAspectRatio: false,
-        scales: {x: xAxis, y: yAxis('Yield (kg/ha)')},
+        scales: {x: xAxis, y: yAxis('Yield (Kg/Ha)')},
         plugins: {legend: {position: 'top'}},
       },
     });
@@ -472,8 +472,8 @@ var Charts = (function () {
       data: {
         labels: top.map(function (v) { return v.village; }),
         datasets: [{
-          label: 'Production (M kg)',
-          data: top.map(function (v) { return Math.round(v.prod_kg / 1e6 * 100) / 100; }),
+          label: 'Production (MT)',
+          data: top.map(function (v) { return Math.round(v.prod_kg / 1000); }),
           backgroundColor: top.map(function (v) { return alpha(SITE_COLORS[v.site] || '#6B7280', 0.7); }),
           borderColor: top.map(function (v) { return SITE_COLORS[v.site] || '#6B7280'; }),
           borderWidth: 1.5, borderRadius: 3,
@@ -483,14 +483,14 @@ var Charts = (function () {
         indexAxis: 'y',
         responsive: true, maintainAspectRatio: false,
         scales: {
-          x: Object.assign({}, xAxis, {title: {display: true, text: 'Production (M kg)', color: '#5A6882'}}),
+          x: Object.assign({}, xAxis, {title: {display: true, text: 'Production (MT)', color: '#5A6882'}}),
           y: {grid: {display: false}, ticks: {color: '#9BAAC5', font: {size: 10.5}}},
         },
         plugins: {legend: {display: false},
           tooltip: {callbacks: {
             afterLabel: function (ctx) {
               var v = top[ctx.dataIndex];
-              return '  Yield: ' + v.avg_yield_kg_ha + ' kg/ha | Farmers: ' + v.total_farmers;
+              return '  Yield: ' + v.avg_yield_kg_ha + ' Kg/Ha | Farmers: ' + v.total_farmers;
             }
           }}},
       },
@@ -506,14 +506,14 @@ var Charts = (function () {
         labels: labels,
         datasets: [
           {
-            type: 'bar', label: 'Volume (M kg)',
-            data: trend.map(function (d) { return Math.round(d.purch_kg / 1e6 * 100) / 100; }),
+            type: 'bar', label: 'Volume (MT)',
+            data: trend.map(function (d) { return Math.round(d.purch_kg / 1000); }),
             backgroundColor: alpha('#00D4A8', 0.5), borderColor: '#00D4A8',
             borderWidth: 1.5, borderRadius: 4, yAxisID: 'y',
           },
           {
-            type: 'line', label: 'Revenue (B ₨)',
-            data: trend.map(function (d) { return Math.round(d.purch_riel / 1e9 * 100) / 100; }),
+            type: 'line', label: 'Revenue ($M)',
+            data: trend.map(function (d) { return Math.round(d.purch_riel / 4e9 * 100) / 100; }),
             borderColor: '#F59E0B', backgroundColor: alpha('#F59E0B', 0.1),
             borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#F59E0B',
             tension: 0.4, fill: true, yAxisID: 'y2',
@@ -522,7 +522,7 @@ var Charts = (function () {
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        scales: {x: xAxis, y: yAxis('Volume (M kg)'), y2: yAxis('Revenue (B ₨)', true)},
+        scales: {x: xAxis, y: yAxis('Volume (MT)'), y2: yAxis('Revenue ($M)', true)},
         plugins: {legend: {position: 'top'}},
       },
     });
@@ -536,7 +536,7 @@ var Charts = (function () {
       data: {
         labels: labels,
         datasets: [{
-          label: 'Avg Price (₨/kg)',
+          label: 'Avg Price (KHR/Kg)',
           data: trend.map(function (d) { return d.avg_price; }),
           borderColor: '#F59E0B', backgroundColor: alpha('#F59E0B', 0.1),
           borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: '#F59E0B',
@@ -545,11 +545,11 @@ var Charts = (function () {
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        scales: {x: xAxis, y: yAxis('Price (Riel / kg)')},
+        scales: {x: xAxis, y: yAxis('Price (KHR / Kg)')},
         plugins: {
           legend: {display: false},
           tooltip: {callbacks: {
-            label: function (ctx) { return ' ₨' + (ctx.parsed.y || 0).toLocaleString() + ' / kg'; }
+            label: function (ctx) { return ' ' + (ctx.parsed.y || 0).toLocaleString() + ' KHR / Kg'; }
           }},
         },
       },
@@ -563,7 +563,7 @@ var Charts = (function () {
       return {
         label: y,
         data: sites.map(function (s) {
-          return Math.round((siteYearData[s][y] || {}).purch_riel / 1e9 * 100) / 100;
+          return Math.round((siteYearData[s][y] || {}).purch_riel / 4e9 * 100) / 100;
         }),
         backgroundColor: alpha(YEAR_PALETTE[i % YEAR_PALETTE.length], 0.7),
         borderColor: YEAR_PALETTE[i % YEAR_PALETTE.length],
@@ -575,7 +575,7 @@ var Charts = (function () {
       data: {labels: sites, datasets: datasets},
       options: {
         responsive: true, maintainAspectRatio: false,
-        scales: {x: xAxis, y: Object.assign({}, yAxis('Revenue (B ₨)'), {beginAtZero: true})},
+        scales: {x: xAxis, y: Object.assign({}, yAxis('Revenue ($M)'), {beginAtZero: true})},
         plugins: {legend: {position: 'top'}},
       },
     });
@@ -607,7 +607,7 @@ var Charts = (function () {
       data: {labels: years, datasets: datasets},
       options: {
         responsive: true, maintainAspectRatio: false,
-        scales: {x: xAxis, y: Object.assign({}, yAxis('Volume (metric tons)'), {stacked: true, beginAtZero: true})},
+        scales: {x: xAxis, y: Object.assign({}, yAxis('Volume (MT)'), {stacked: true, beginAtZero: true})},
         plugins: {legend: {position: 'top', labels: {font: {size: 10}}}},
       },
     });
@@ -742,7 +742,7 @@ var Charts = (function () {
       data: {
         labels: grades,
         datasets: [{
-          label: 'Avg Price (₨/kg)',
+          label: 'Avg Price (KHR/Kg)',
           data: avgs,
           backgroundColor: grades.map(function (g) { return alpha(GRADE_COLORS[g] || '#6B7280', 0.7); }),
           borderColor: grades.map(function (g) { return GRADE_COLORS[g] || '#6B7280'; }),
@@ -753,7 +753,7 @@ var Charts = (function () {
         responsive: true, maintainAspectRatio: false,
         scales: {
           x: Object.assign({}, xAxis, {grid: {display: false}}),
-          y: yAxis('Price (Riel / kg)'),
+          y: yAxis('Price (KHR / Kg)'),
         },
         plugins: {legend: {display: false}},
       },
@@ -768,7 +768,7 @@ var Charts = (function () {
       data: {
         labels: labels,
         datasets: [{
-          label: 'Total Farmland (ha)',
+          label: 'Total Farmland (Ha)',
           data: trend.map(function (d) { return Math.round(d.area_ha); }),
           borderColor: '#00D4A8', backgroundColor: alpha('#00D4A8', 0.12),
           borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: '#00D4A8',
@@ -777,7 +777,7 @@ var Charts = (function () {
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        scales: {x: xAxis, y: yAxis('Hectares')},
+        scales: {x: xAxis, y: yAxis('Hectares (Ha)')},
         plugins: {legend: {display: false}},
       },
     });

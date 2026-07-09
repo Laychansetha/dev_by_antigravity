@@ -92,7 +92,7 @@ def avg(lst):
 # ── Main ───────────────────────────────────────────────────────────────────────
 def main():
     print("=" * 56)
-    print("  Agricultural Dashboard -- Data Preprocessor")
+    print("  Farm Data Dashboard -- Data Preprocessor")
     print("=" * 56)
 
     # ── 1. Load dimensions ────────────────────────────────────────
@@ -588,8 +588,8 @@ def main():
     print("\n  Summary:")
     print("    Years:       %s" % ', '.join(all_years))
     print("    Farmers:     %d" % len(all_f))
-    print("    Production:  %.2fM kg total" % (all_p/1e6))
-    print("    Revenue:     %.2fB riel total" % (all_r/1e9))
+    print("    Production:  {:,} MT total".format(round(all_p / 1000)))
+    print("    Revenue:     ${:,.2f}M USD total".format(all_r / 4e9))
     print("    Compliance:  %.1f%%" % pct(all_c, all_i))
     print("\n  Open index.html in a browser to view the dashboard.")
     print("=" * 56)

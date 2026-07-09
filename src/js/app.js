@@ -340,8 +340,8 @@
     var kpis = document.getElementById('geo-site-kpis');
     kpis.innerHTML = 
       '<div class="geo-kpi-item"><div class="geo-kpi-label">Active Farmers</div><div class="geo-kpi-val">' + d.total_farmers.toLocaleString() + '</div></div>' +
-      '<div class="geo-kpi-item"><div class="geo-kpi-label">Farmland Area</div><div class="geo-kpi-val">' + d.area_ha.toLocaleString() + ' ha</div></div>' +
-      '<div class="geo-kpi-item"><div class="geo-kpi-label">Paddy Yield</div><div class="geo-kpi-val">' + d.avg_yield.toLocaleString() + ' kg/ha</div></div>' +
+      '<div class="geo-kpi-item"><div class="geo-kpi-label">Farmland Area</div><div class="geo-kpi-val">' + d.area_ha.toLocaleString() + ' Ha</div></div>' +
+      '<div class="geo-kpi-item"><div class="geo-kpi-label">Paddy Yield</div><div class="geo-kpi-val">' + d.avg_yield.toLocaleString() + ' Kg/Ha</div></div>' +
       '<div class="geo-kpi-item"><div class="geo-kpi-label">Program Revenue</div><div class="geo-kpi-val">' + Data.rielFmt(d.purch_riel) + '</div></div>';
 
     // List villages in site
@@ -399,6 +399,12 @@
       });
     });
 
+    // Set initial sort class
+    var initialTh = document.querySelector('#records-table th[data-col="' + tableSortCol + '"]');
+    if (initialTh) {
+      initialTh.classList.add(tableSortDesc ? 'sort-desc' : 'sort-asc');
+    }
+
     // Export button
     document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
 
@@ -406,6 +412,12 @@
     document.getElementById('modal-close').addEventListener('click', function () {
       document.getElementById('farmer-modal').style.display = 'none';
     });
+  }
+
+  // Helper for empty/incomplete field fallback
+  function fallback(val, suffix) {
+    if (val == null || val === '' || val === 'Unknown') return '—';
+    return val + (suffix || '');
   }
 
   function updateRecords() {
@@ -435,23 +447,23 @@
     var tbody = document.getElementById('records-tbody');
     tbody.innerHTML = '';
     if (!pageData.length) {
-      tbody.innerHTML = '<tr><td colspan="12" class="empty-state">No farmers match the current filter selection</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="13" class="empty-state">No farmers match the current filter selection</td></tr>';
     } else {
       pageData.forEach(function (f) {
         var tr = document.createElement('tr');
         var certCls = f.latest_cert ? 'cert-' + f.latest_cert.replace(' ', '-') : 'cert-Unknown';
         tr.innerHTML = 
-          '<td class="fw-700 text-blue">' + f.uid + '</td>' +
-          '<td>' + f.site + '</td>' +
-          '<td>' + f.village + '</td>' +
-          '<td>' + f.gender + '</td>' +
-          '<td>' + f.first_year + '</td>' +
-          '<td>' + f.years_count + ' years</td>' +
-          '<td>' + f.insp_total + '</td>' +
+          '<td class="fw-700 text-blue">' + fallback(f.uid) + '</td>' +
+          '<td>' + fallback(f.site) + '</td>' +
+          '<td>' + fallback(f.village) + '</td>' +
+          '<td>' + fallback(f.gender) + '</td>' +
+          '<td>' + fallback(f.first_year) + '</td>' +
+          '<td>' + (f.years_count ? f.years_count + ' years' : '—') + '</td>' +
+          '<td>' + (f.insp_total != null ? f.insp_total : '—') + '</td>' +
           '<td>' + (f.compliance !== null ? f.compliance + '%' : '—') + '</td>' +
-          '<td>' + f.area_ha.toFixed(2) + ' ha</td>' +
-          '<td>' + Data.numFmt(f.prod_kg) + ' kg</td>' +
-          '<td>' + Data.rielFmt(f.purch_riel) + '</td>' +
+          '<td>' + (f.area_ha != null ? f.area_ha.toFixed(2) + ' Ha' : '—') + '</td>' +
+          '<td>' + (f.prod_kg != null ? Data.numFmt(f.prod_kg) + ' Kg' : '—') + '</td>' +
+          '<td>' + (f.purch_riel != null ? Data.rielFmt(f.purch_riel) : '—') + '</td>' +
           '<td><span class="cert-badge ' + certCls + '">' + (f.latest_cert || 'Unknown') + '</span></td>' +
           '<td><button class="action-btn" data-uid="' + f.uid + '" title="View Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></td>';
         
@@ -522,42 +534,56 @@
 
   // ── Profile Detail Modal ────────────────────────────────────
   function openFarmerModal(f) {
-    document.getElementById('modal-farmer-id').textContent = 'Profile: ' + f.uid;
-    document.getElementById('modal-farmer-meta').textContent = f.gender + ' | Family ID: ' + f.family_id + ' | ' + f.village + ', ' + f.site;
+    document.getElementById('modal-farmer-id').textContent = 'Profile: ' + fallback(f.uid);
+    var gender = fallback(f.gender);
+    var familyId = fallback(f.family_id);
+    var village = fallback(f.village);
+    var site = fallback(f.site);
+    document.getElementById('modal-farmer-meta').textContent = gender + ' | Family ID: ' + familyId + ' | ' + village + ', ' + site;
 
     var mk = document.getElementById('modal-kpis');
     mk.innerHTML = 
       '<div class="modal-kpi"><div class="modal-kpi-val">' + Data.kgFmt(f.prod_kg) + '</div><div class="modal-kpi-label">Cumulative Prod</div></div>' +
       '<div class="modal-kpi-val modal-kpi"><div class="modal-kpi-val">' + Data.rielFmt(f.purch_riel) + '</div><div class="modal-kpi-label">Cumulative Income</div></div>' +
-      '<div class="modal-kpi"><div class="modal-kpi-val">' + f.area_ha.toFixed(2) + ' ha</div><div class="modal-kpi-label">Inspected Area</div></div>';
+      '<div class="modal-kpi"><div class="modal-kpi-val">' + (f.area_ha != null ? f.area_ha.toFixed(2) + ' Ha' : '—') + '</div><div class="modal-kpi-label">Inspected Area</div></div>';
 
     // Cert History Timeline
     var timeline = document.getElementById('modal-cert-timeline');
     timeline.innerHTML = '';
     // Query inspections matching farmer uid
     var inspections = Data.raw().farmer_records.filter(function(fr){return fr.uid === f.uid;})[0];
-    if (inspections && inspections.certs) {
+    if (inspections && inspections.certs && inspections.certs.length > 0) {
       f.certs.forEach(function (c) {
         var tb = document.createElement('span');
         tb.className = 'cert-year-badge cert-' + c.replace(' ', '-');
         tb.textContent = c;
         timeline.appendChild(tb);
       });
+    } else {
+      timeline.innerHTML = '<span class="text-muted">No certification history recorded</span>';
     }
 
     // Varieties tag list
     var varWrap = document.getElementById('modal-varieties');
     varWrap.innerHTML = '';
-    f.varieties.forEach(function (v) {
-      varWrap.innerHTML += '<span class="tag">' + v + '</span>';
-    });
+    if (f.varieties && f.varieties.length > 0) {
+      f.varieties.forEach(function (v) {
+        varWrap.innerHTML += '<span class="tag">' + v + '</span>';
+      });
+    } else {
+      varWrap.innerHTML = '<span class="text-muted">No crop varieties recorded</span>';
+    }
 
     // Active years
     var yrsWrap = document.getElementById('modal-years');
     yrsWrap.innerHTML = '';
-    f.years.forEach(function (y) {
-      yrsWrap.innerHTML += '<span class="tag year">' + y + '</span>';
-    });
+    if (f.years && f.years.length > 0) {
+      f.years.forEach(function (y) {
+        yrsWrap.innerHTML += '<span class="tag year">' + y + '</span>';
+      });
+    } else {
+      yrsWrap.innerHTML = '<span class="text-muted">No active years recorded</span>';
+    }
 
     document.getElementById('farmer-modal').style.display = 'flex';
   }
@@ -567,7 +593,7 @@
     var data = Data.getFarmerRecords(state, tableSearch, tableFilterSite, tableFilterCert, tableFilterGender);
     if (!data.length) return;
 
-    var headers = ['Farmer UID', 'Family ID', 'Site', 'Village', 'Gender', 'First Seen', 'Years Active', 'Inspections', 'Compliance', 'Farmland Area (ha)', 'Total Production (kg)', 'Total Revenue (Riel)', 'Latest Cert'];
+    var headers = ['Farmer UID', 'Family ID', 'Site', 'Village', 'Gender', 'First Seen', 'Years Active', 'Inspections', 'Compliance', 'Farmland Area (Ha)', 'Total Production (Kg)', 'Total Revenue (KHR)', 'Latest Cert'];
     
     var csvContent = 'data:text/csv;charset=utf-8,\uFEFF';
     csvContent += headers.join(',') + '\r\n';
@@ -587,7 +613,7 @@
     var encodedUri = encodeURI(csvContent);
     var link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'agroinsight_farmer_records.csv');
+    link.setAttribute('download', 'farm_data_farmer_records.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

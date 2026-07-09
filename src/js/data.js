@@ -1,5 +1,5 @@
 /* ============================================================
-   data.js  —  Data access layer for AgroInsight dashboard
+   data.js  —  Data access layer for Farm Data dashboard
    Reads window.DASHBOARD_DATA and provides filtered views
    ============================================================ */
 
@@ -22,16 +22,23 @@ var Data = (function () {
     return n.toLocaleString();
   }
   function kgFmt(n) {
-    if (n == null) return '—';
-    if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M kg';
-    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K kg';
-    return n.toLocaleString() + ' kg';
+    if (n == null || isNaN(n)) return '—';
+    if (n >= 1000) {
+      var mt = n / 1000;
+      return mt.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + ' MT';
+    }
+    return Math.round(n).toLocaleString() + ' Kg';
   }
   function rielFmt(n) {
-    if (n == null) return '—';
-    if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B ₨';
-    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M ₨';
-    return n.toLocaleString() + ' ₨';
+    if (n == null || isNaN(n)) return '—';
+    if (n >= 4000) {
+      var usd = n / 4000;
+      if (usd >= 1e6) {
+        return '$' + (usd / 1e6).toFixed(2) + 'M';
+      }
+      return '$' + Math.round(usd).toLocaleString();
+    }
+    return Math.round(n).toLocaleString() + ' KHR';
   }
   function pctFmt(n) {
     if (n == null || isNaN(n)) return '—';
@@ -266,7 +273,7 @@ var Data = (function () {
       {icon: '🌾', title: 'Production Increase',
        body: 'Total rice production increased by ' + prodGrowth + '%, rising from ' + kgFmt(first.prod_kg) + ' to ' + kgFmt(last.prod_kg) + ' in ' + last.year + '.'},
       {icon: '🏆', title: 'Top Yield Site',
-       body: (topYield.site || '—') + ' achieves the highest average yield at ' + numFmt(topYield.avg_yield, 1) + ' kg/ha, indicating strong agronomic practices.'},
+       body: (topYield.site || '—') + ' achieves the highest average yield at ' + numFmt(topYield.avg_yield, 1) + ' Kg/Ha, indicating strong agronomic practices.'},
       {icon: '🗺️', title: 'Largest Site by Farmers',
        body: (largestSite.site || '—') + ' is the largest site with ' + (largestSite.farmers || 0).toLocaleString() + ' farmer-year participations recorded.'},
       {icon: '📊', title: 'YoY Farmer Growth',

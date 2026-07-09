@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgroInsight — Agricultural Operations Dashboard</title>
+  <title>Farm Data — Agricultural Operations Dashboard</title>
   <meta name="description"
     content="Interactive agricultural operations dashboard for organic rice farming across Cambodia. Track farmer participation, production, yield, quality, and compliance." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,13 +21,14 @@
   <div id="loading-screen">
     <div class="loader-inner">
       <div class="loader-logo">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <path d="M24 4 L28 16 L40 16 L30 24 L34 36 L24 28 L14 36 L18 24 L8 16 L20 16 Z" fill="#00D4A8"
-            opacity="0.9" />
-          <circle cx="24" cy="24" r="6" fill="#00D4A8" />
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="15" fill="rgba(0,212,168,0.12)" stroke="#00D4A8" stroke-width="1.5" />
+          <path d="M16 27 C 16 19, 14 12, 7 8 C 13 12, 15 19, 16 27 Z" fill="#00D4A8" />
+          <path d="M16 27 C 16 19, 18 12, 25 8 C 19 12, 17 19, 16 27 Z" fill="#00D4A8" />
+          <path d="M16 27 C 15.5 19, 15.5 11, 16 4 C 16.5 11, 16.5 19, 16 27 Z" fill="#00D4A8" opacity="0.8" />
         </svg>
       </div>
-      <div class="loader-title">FieldDataInsight</div>
+      <div class="loader-title">Farm Data</div>
       <div class="loader-sub">Loading agricultural data…</div>
       <div class="loader-bar-wrap">
         <div id="loader-bar" class="loader-bar"></div>
@@ -57,12 +58,13 @@
       <div class="sidebar-brand">
         <svg class="brand-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
           <circle cx="16" cy="16" r="15" fill="rgba(0,212,168,0.12)" stroke="#00D4A8" stroke-width="1.5" />
-          <path d="M16 6 L18.5 13 L26 13 L20 17.5 L22.5 24.5 L16 20 L9.5 24.5 L12 17.5 L6 13 L13.5 13 Z"
-            fill="#00D4A8" />
+          <path d="M16 27 C 16 19, 14 12, 7 8 C 13 12, 15 19, 16 27 Z" fill="#00D4A8" />
+          <path d="M16 27 C 16 19, 18 12, 25 8 C 19 12, 17 19, 16 27 Z" fill="#00D4A8" />
+          <path d="M16 27 C 15.5 19, 15.5 11, 16 4 C 16.5 11, 16.5 19, 16 27 Z" fill="#00D4A8" opacity="0.8" />
         </svg>
         <div class="brand-text">
-          <span class="brand-name">AgroInsight</span>
-          <span class="brand-sub">Cambodia Rice Program</span>
+          <span class="brand-name">Farm Data</span>
+          <span class="brand-sub">Ibis Rice Program</span>
         </div>
       </div>
 
@@ -364,7 +366,7 @@
 
           <div class="chart-card full-width">
             <div class="chart-header">
-              <h3>Top 20 Villages by Total Production (kg)</h3>
+              <h3>Top 20 Villages by Total Production (Kg)</h3>
               <span class="chart-badge badge-purple">All Years</span>
             </div>
             <div class="chart-body chart-body-lg"><canvas id="chart-top-villages-prod"></canvas></div>
@@ -385,7 +387,7 @@
             </div>
             <div class="chart-card">
               <div class="chart-header">
-                <h3>Average Price per kg (Riel) by Year</h3>
+                <h3>Average Price per Kg (KHR) by Year</h3>
                 <span class="chart-badge badge-gold">Trend</span>
               </div>
               <div class="chart-body"><canvas id="chart-price-trend"></canvas></div>
@@ -448,7 +450,7 @@
             </div>
             <div class="chart-card">
               <div class="chart-header">
-                <h3>Avg Price by Grade (Riel/kg)</h3>
+                <h3>Avg Price by Grade (KHR/Kg)</h3>
                 <span class="chart-badge badge-purple">Grade</span>
               </div>
               <div class="chart-body"><canvas id="chart-price-grade"></canvas></div>
@@ -491,7 +493,7 @@
           <div class="charts-row cols-2">
             <div class="chart-card">
               <div class="chart-header">
-                <h3>Total Certified Farmland Area (ha) by Year</h3>
+                <h3>Total Certified Farmland Area (Ha) by Year</h3>
                 <span class="chart-badge badge-green">Growth</span>
               </div>
               <div class="chart-body"><canvas id="chart-area-trend"></canvas></div>
@@ -579,9 +581,9 @@
                     <th class="sortable" data-col="years_count">Years Active <span class="sort-icon">↕</span></th>
                     <th class="sortable" data-col="insp_total">Inspections <span class="sort-icon">↕</span></th>
                     <th class="sortable" data-col="compliance">Compliance <span class="sort-icon">↕</span></th>
-                    <th class="sortable" data-col="area_ha">Area (ha) <span class="sort-icon">↕</span></th>
-                    <th class="sortable" data-col="prod_kg">Production (kg) <span class="sort-icon">↕</span></th>
-                    <th class="sortable" data-col="purch_riel">Revenue (Riel) <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="area_ha">Area (Ha) <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="prod_kg">Production (Kg) <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="purch_riel">Revenue <span class="sort-icon">↕</span></th>
                     <th>Certification</th>
                     <th>Actions</th>
                   </tr>
