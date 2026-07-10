@@ -70,7 +70,17 @@
   function updateSidebarMeta() {
     var meta = Data.getMeta();
     document.getElementById('sidebar-gen-date').textContent = new Date(meta.generated_at).toLocaleDateString();
-    document.getElementById('sidebar-years').textContent = meta.years.join(', ');
+    
+    var yearsStr = '';
+    if (meta.years && meta.years.length > 0) {
+      var sortedYears = meta.years.slice().sort();
+      yearsStr = sortedYears.length > 1 
+        ? sortedYears[0] + '–' + sortedYears[sortedYears.length - 1] 
+        : sortedYears[0];
+    } else {
+      yearsStr = '—';
+    }
+    document.getElementById('sidebar-years').textContent = yearsStr;
   }
 
   // ── Sidebar Toggle ──────────────────────────────────────────
