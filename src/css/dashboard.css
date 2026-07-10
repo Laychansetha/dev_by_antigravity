@@ -145,14 +145,11 @@ body {
   width: var(--sidebar-w);
   background: var(--bg-2);
   border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   display: flex; flex-direction: column;
   flex-shrink: 0;
   transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
   overflow: hidden;
   z-index: 100;
-  height: fit-content;
-  max-height: 100vh;
 }
 #sidebar.collapsed { width: 64px; }
 #sidebar.collapsed .brand-text,
@@ -182,7 +179,7 @@ body {
 }
 
 .nav-list {
-  list-style: none; flex: none; padding: 12px 8px; overflow-y: auto;
+  list-style: none; flex: 1; padding: 12px 8px; overflow-y: auto;
   display: flex; flex-direction: column; gap: 2px;
 }
 .nav-item {
