@@ -30,11 +30,11 @@ OUTPUT_JS  = os.path.join(OUTPUT_DIR, 'dashboard_data.js')
 
 # ── Cambodia site coordinates ─────────────────────────────────────────────────
 SITE_COORDS = {
-    '1': {'name': 'Mondolkiri',   'lat': 12.4535, 'lng': 107.1877},
-    '2': {'name': 'Preah Vihear', 'lat': 13.7960, 'lng': 104.9800},
-    '3': {'name': 'Prey Lang',    'lat': 12.9500, 'lng': 105.5000},
+    '1': {'name': 'Preah Vihear', 'lat': 13.7960, 'lng': 104.9800},
+    '2': {'name': 'Prey Lang',    'lat': 12.9500, 'lng': 105.5000},
+    '3': {'name': 'Siem Pang',    'lat': 14.1200, 'lng': 106.3700},
     '4': {'name': 'Ratanakiri',   'lat': 13.7350, 'lng': 106.9870},
-    '5': {'name': 'Siem Pang',    'lat': 14.1200, 'lng': 106.3700},
+    '5': {'name': 'Mondolkiri',   'lat': 12.4535, 'lng': 107.1877},
 }
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
