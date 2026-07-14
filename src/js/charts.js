@@ -799,7 +799,7 @@ var Charts = (function () {
   // ── 25. Cert Trend (stacked area) ────────────────────────────
   function renderCertTrend(id, trend) {
     var labels = trend.map(function (d) { return d.year; });
-    var certs  = ['Organic', 'New Organic', 'Ibis I', 'Ibis II', 'WF', 'Adhoc'];
+    var certs  = ['Organic', 'New Organic', 'Ibis I', 'Ibis II', 'WF'];
     var datasets = certs.map(function (c) {
       return {
         label: c,
@@ -825,8 +825,8 @@ var Charts = (function () {
     var counts = {};
     trend.forEach(function (d) {
       Object.keys(d.land_sit || {}).forEach(function (k) {
-        var label = k || 'Unknown';
-        if (['Low land', 'Highland', 'Flooded land', 'Unknown'].indexOf(label) === -1) label = 'Unknown';
+        var label = k || 'Lowland';
+        if (['Lowland', 'Highland', 'Flooded land'].indexOf(label) === -1) label = 'Lowland';
         counts[label] = (counts[label] || 0) + d.land_sit[k];
       });
     });
@@ -837,7 +837,7 @@ var Charts = (function () {
         labels: labels,
         datasets: [{
           data: labels.map(function(k){return counts[k];}),
-          backgroundColor: ['#00D4A8','#F59E0B','#60A5FA','#6B7280'],
+          backgroundColor: ['#00D4A8','#F59E0B','#60A5FA'],
           borderColor: '#1C2640', borderWidth: 2, hoverOffset: 6,
         }],
       },

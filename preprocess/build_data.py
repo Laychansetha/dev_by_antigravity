@@ -60,6 +60,14 @@ def normalize_cert(s):
     if s in ('wf', 'wildlife friendly', 'wildlife-friendly'): return 'WF'
     return s.title()
 
+def normalize_land_sit(s):
+    s = (s or '').strip().lower()
+    if not s or s == 'unknown': return 'Lowland'
+    if s in ('low land', 'lowland'): return 'Lowland'
+    if s in ('highland', 'high land'): return 'Highland'
+    if s in ('flooded land', 'flooded'): return 'Flooded land'
+    return s.title()
+
 def normalize_farmer_status(s):
     s = (s or '').strip().lower()
     if not s: return 'Unknown'
@@ -170,7 +178,7 @@ def main():
             elif fs == 'Existing': d['existing'] += 1
             elif fs == 'Rejoin': d['rejoin'] += 1
         d['cert'][normalize_cert(r.get('status_harvest', ''))] += 1
-        d['land_sit'][(r.get('land_situation', '') or 'Unknown').strip()] += 1
+        d['land_sit'][normalize_land_sit(r.get('land_situation', ''))] += 1
         d['land_own'][(r.get('land_ownership', '')  or 'Unknown').strip()] += 1
         d['irrigation'][(r.get('irrigation_system', '') or 'None').strip()] += 1
 
@@ -265,7 +273,7 @@ def main():
             elif fs == 'Existing': d['existing'] += 1
             elif fs == 'Rejoin': d['rejoin'] += 1
         d['cert'][normalize_cert(r.get('status_harvest', ''))] += 1
-        d['land_sit'][(r.get('land_situation', '') or 'Unknown').strip()] += 1
+        d['land_sit'][normalize_land_sit(r.get('land_situation', ''))] += 1
         d['land_own'][(r.get('land_ownership', '')  or 'Unknown').strip()] += 1
         d['irrigation'][(r.get('irrigation_system', '') or 'None').strip()] += 1
 
