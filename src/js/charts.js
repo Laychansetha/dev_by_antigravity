@@ -947,6 +947,8 @@ var Charts = (function () {
         plugins: {legend: {position: 'top'}},
       },
     });
+  }
+
   // ── 30. Mini Site Farmer Trend (line) ─────────────────────────
   function renderMiniSiteTrend(id, name, siteYears) {
     var yrs = Object.keys(siteYears).sort();
